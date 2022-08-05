@@ -7,18 +7,18 @@ function Get-FoxSitesInformation
   .PARAMETER SecuredCredentials
   IF NOT SUPPLIED, ASKSF OR CREDENTIALS
   IF SUPPLIED, USE THAT SUPPLIED CREDENTIALS
-  
+
   .PARAMETER Servers
   IF NOT SUPPLIED, CHECK FOR FILE "IISServers.csv" IN DOCUMNETS FOLDER THAT INCLUDES SERVER NAMES
     IF IISServers.csv IS NOT FOUND, ASKS FOR SERVERS AND SAVE TO IISServers.csv FILE AT CHOSEN Location
   IF SUPPLIED USE THAT SUPPLIED SERVERS.
-  
+
   .PARAMETER OutputType
   HTML: CREATED HTML FILE WITH TABLE
   CSV: CREATED CSV FILE AT CHOSEN Location.
   EXCEL: CREATE XLSX FILE AT CHOSEN Location
   QUICKREVIEW: OUTPUT RESULTS TO CONSOLE
-  
+
 
 
   .EXAMPLE
@@ -38,22 +38,22 @@ function Get-FoxSitesInformation
 
   ### Helper function to test credentials ##
   function Test-Cred {
-           
+
     [CmdletBinding()]
-    [OutputType([String])] 
-       
-    Param ( 
-        [Parameter( 
-            Mandatory = $false, 
-            ValueFromPipeLine = $true, 
+    [OutputType([String])]
+
+    Param (
+        [Parameter(
+            Mandatory = $false,
+            ValueFromPipeLine = $true,
             ValueFromPipelineByPropertyName = $true
-        )] 
-        [Alias( 
+        )]
+        [Alias(
             'PSCredential'
-        )] 
-        [ValidateNotNull()] 
+        )]
+        [ValidateNotNull()]
         [System.Management.Automation.PSCredential]
-        [System.Management.Automation.Credential()] 
+        [System.Management.Automation.Credential()]
         $Credentials,
         [switch]$Quite
     )
@@ -61,7 +61,7 @@ function Get-FoxSitesInformation
     $Root = $null
     $Username = $null
     $Password = $null
-      
+
     If($null -eq $Credentials)
     {
         Try
@@ -76,14 +76,14 @@ function Get-FoxSitesInformation
             Break
         }
     }
-      
+
     # Checking module
     Try
     {
         # Split username and password
         $Username = $credentials.username
         $Password = $credentials.GetNetworkCredential().password
-  
+
         # Get Domain
         $Root = "LDAP://" + ([ADSI]'').distinguishedName
         $Domain = New-Object System.DirectoryServices.DirectoryEntry($Root,$UserName,$Password)
@@ -93,7 +93,7 @@ function Get-FoxSitesInformation
         $_.Exception.Message
         Continue
     }
-  
+
     If(!$domain)
     {
         Write-Warning "Something went wrong"
@@ -122,9 +122,9 @@ $ServersPath=$ServersPath+ '\IISServers.csv'
 if(Test-Path -Path $ServersPath){
   $Servers=import-CSV -Path $ServersPath | Select-Object -Unique -ExpandProperty 'Servers'
 }
-Else{  Write-output "Notice: This is a one-time Operation`n" 
+Else{  Write-output "Notice: This is a one-time Operation`n"
 'Servers' | Out-File -FilePath $ServersPath
-$Servers=(Read-Host -Prompt 'Enter your IIS Server names - Seperated by Commas (,)').Split(',') 
+$Servers=(Read-Host -Prompt 'Enter your IIS Server names - Seperated by Commas (,)').Split(',')
 Add-Content -Value $Servers -Path $ServersPath
 }}
 
@@ -139,7 +139,7 @@ if((test-cred -Credentials $cred -Quite) -eq $false){
 
 }
 $SQLQuery='select value as [FoxVersion],UserDataSourcesNew.ServerName as [LDSServer],UserDataSourcesNew.Port as [LDSPort]
-from SystemConfiguration 
+from SystemConfiguration
 left join UserDataSourcesNew on UserDataSourcesNew.UsersContainerDistinguishedName=''CN=Fox,CN=OuTree,DC=Fox,DC=Bks''
 where SystemConfiguration.property=''version'''
 
@@ -158,7 +158,7 @@ $SitesInfo=Invoke-Command -ComputerName $Servers -Credential $cred   -ScriptBloc
         Elseif(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\BKS\Fox\$SiteName"){
           $Registry="HKLM:\SOFTWARE\WOW6432Node\BKS\Fox\$SiteName"}
         else{return}
-        
+
         if ($null -ne (Get-ItemProperty -Path $Registry -Name Location -ErrorAction SilentlyContinue).Location){
             $SQLInstance=Get-ItemProperty -Path $Registry | Select-Object -ExpandProperty SQL_Server
             $DataBase=Get-ItemProperty -Path $Registry | Select-Object -ExpandProperty Sql_DataBase
@@ -183,7 +183,7 @@ $SitesInfo=Invoke-Command -ComputerName $Servers -Credential $cred   -ScriptBloc
           $LDSServer=$HostName}
         $LDSPort=$SQLResult| Select-Object -ExpandProperty LDSPort
         $Version=$SQLResult| Select-Object -ExpandProperty FoxVersion
-        
+
         $HyperLinks=''
         foreach ($bind in $site.bindings.Collection)
         {
@@ -206,7 +206,7 @@ $SitesInfo=Invoke-Command -ComputerName $Servers -Credential $cred   -ScriptBloc
         Add-Member -InputObject $Item -type NoteProperty -Name 'SQL Authentication Type' -Value $SQLAuthType
         Add-Member -InputObject $Item -type NoteProperty -Name 'LDS Server' -Value $LDSServer.ToUpper()
         Add-Member -InputObject $Item -type NoteProperty -Name 'LDS Port' -Value $LDSPort
-    
+
         $SitesInfo+=$Item
         }
     }
@@ -215,11 +215,11 @@ $SitesInfo=Invoke-Command -ComputerName $Servers -Credential $cred   -ScriptBloc
 }
 Switch($OutputType){
   'Console'{$SitesInfo |Select-Object -ExcludeProperty 'PSComputerName','RunspaceId' | Format-Table -AutoSize -Force}
-  'HTML'{  
+  'HTML'{
           $Temp=[Environment]::GetFolderPath('MyDocuments')
           $Temp=$Temp + '\FoxSitesInformation.HTML'
           $SitesInfo | Out-HtmlView  -FilePath $Temp -DefaultSortColumn 'Fox Version' -DefaultSortOrder Descending -Title 'Your Fox Sites Information' -Filtering  -FuzzySearchSmartToggle -DisablePaging -ExcludeProperty ('PSComputerName','RunspaceId','PSShowComputerName')  -Buttons ('csvHtml5','excelHtml5','pdfHtml5','print','searchBuilder','searchPanes') -AutoSize -Style cell-border    #-FixedHeader -FreezeColumnsLeft #-FixedHeader -AutoSize -OrderMulti  -DefaultSortOrder Descending -Title 'Fox Sites Information' -Filtering -PreventShowHTML
-          $HTMLContent=Get-Content -Path $Temp 
+          $HTMLContent=Get-Content -Path $Temp
           $HTMLContent=$HTMLContent -replace '<head>','<head>
           <!-- DisableCaching -->
           <meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0" />
@@ -245,7 +245,7 @@ Switch($OutputType){
       $SitesInfo |Select-Object -ExcludeProperty 'PSComputerName','RunspaceId','PSShowComputerName' | Out-File -FilePath "$Path\FoxSitesInformation.csv"}
     Else {Write-output -Object 'No File Selected. Oborting.' -ForegroundColor Red}
     exit}
-    
+
 
 
 
@@ -260,13 +260,13 @@ Switch($OutputType){
         $SitesInfo |Select-Object -ExcludeProperty 'PSComputerName','RunspaceId','PSShowComputerName' | Export-Excel -Path "$Path\FoxSitesInformation.xlsx" -Title 'Your Fox Sites Information' -WorksheetName (Get-Date -Format 'dd/MM/yyyy') -TitleBold -AutoSize -FreezeTopRowFirstColumn -TableName SitesInformation -Show}
       Else {Write-output -Object 'No File Selected. Oborting.' -ForegroundColor Red}
       exit}
-  'QuickReview'{$SitesInfo |Select-Object -ExcludeProperty 'PSComputerName','RunspaceId','PSShowComputerName' | Out-GridView -Title 'Your Fox IIS Sites Information'} 
+  'QuickReview'{$SitesInfo |Select-Object -ExcludeProperty 'PSComputerName','RunspaceId','PSShowComputerName' | Out-GridView -Title 'Your Fox IIS Sites Information'}
   }
 
 
 }
 
-  
+
 function Convert-Int2Name
 {
     param (
@@ -275,14 +275,13 @@ function Convert-Int2Name
     if($OutputType -notin (1,2,3,4)){
       Write-output -ForegroundColor Red 'Invalid choise. Please select a valid number'
       $OutputType=Read-Host -Prompt "`nChoose an output Type.`nPress number to select`n1. HTML`n2. CSV`n3. EXCEL`n4. QUICKREVIEW (Export to console)`nYour Selection is" | Convert-Int2Name
-
     }
     Switch($OutputType){
       '1'{$OutputType='HTML'}
       '2'{$OutputType='CSV'}
       '3'{$OutputType='EXCEL'}
       '4'{$OutputType='QUICKREVIEW'}
-    }  
+    }
   return $OutputType
 }
 
