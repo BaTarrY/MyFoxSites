@@ -39,7 +39,6 @@ function Get-FoxSitesInformation {
     function Test-Cred {
 
       [CmdletBinding()]
-      [OutputType([Bool])]
 
       Param (
         [Parameter(
