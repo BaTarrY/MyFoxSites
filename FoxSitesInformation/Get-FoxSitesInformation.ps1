@@ -53,7 +53,7 @@ function Get-FoxSitesInformation {
         [ValidateNotNull()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
-        $Credentials,
+        $Credentials
       )
       Begin {
         $Domain = $null
