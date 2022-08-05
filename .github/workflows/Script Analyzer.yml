@@ -42,6 +42,7 @@ jobs:
           recurse: true 
           # Include your own basic security rules. Removing this option will run all the rules 
           #includeRule: '"PSAvoidGlobalAliases", "PSAvoidUsingConvertToSecureStringWithPlainText"'
+          exludeRule: 'PSUseSingularNouns'
           output: results.sarif
       
       # Upload the SARIF file generated in the previous step
