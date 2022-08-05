@@ -1,0 +1,14 @@
+{
+    "cSpell.ignoreWords": [
+        "QUICKREVIEW",
+        "Runspace",
+        "computername",
+        "TOBEREMOVED",
+        "notin",
+        "Sqlcmd",
+    ],
+    "cSpell.words": [
+        "ADSI",
+        "HKLM",
+    ]
+}

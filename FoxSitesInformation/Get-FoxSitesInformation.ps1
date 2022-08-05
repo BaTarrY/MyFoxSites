@@ -4,11 +4,11 @@ function Get-FoxSitesInformation {
   CREATE A TABLE WITH INFORMATION ABOUT FOX SITES.
 
   .PARAMETER SecuredCredentials
-  IF NOT SUPPLIED, ASKSF OR CREDENTIALS
+  IF NOT SUPPLIED, ASKS FOR CREDENTIALS
   IF SUPPLIED, USE THAT SUPPLIED CREDENTIALS
 
   .PARAMETER Servers
-  IF NOT SUPPLIED, CHECK FOR FILE "IISServers.csv" IN DOCUMNETS FOLDER THAT INCLUDES SERVER NAMES
+  IF NOT SUPPLIED, CHECK FOR FILE "IISServers.csv" IN DOCUMENTS FOLDER THAT INCLUDES SERVER NAMES
     IF IISServers.csv IS NOT FOUND, ASKS FOR SERVERS AND SAVE TO IISServers.csv FILE AT CHOSEN Location
   IF SUPPLIED USE THAT SUPPLIED SERVERS.
 
@@ -25,7 +25,7 @@ function Get-FoxSitesInformation {
 
   #>
 
-  #DEBUG REQUIRMENTS
+  #DEBUG REQUIREMENTS
   #find-module -Name ('ImportExcel','PSWriteHTML')  | Save-module -Path "$PSScriptRoot\Modules"
 
   param (
@@ -116,16 +116,16 @@ function Get-FoxSitesInformation {
       Else {
         Write-output "Notice: This is a one-time Operation`n"
         'Servers' | Out-File -FilePath $ServersPath
-        $Servers = (Read-Host -Prompt 'Enter your IIS Server names - Seperated by Commas (,)').Split(',')
+        $Servers = (Read-Host -Prompt 'Enter your IIS Server names - Separated by Commas (,)').Split(',')
         Add-Content -Value $Servers -Path $ServersPath
       }
     }
 
 
     if (!($SecuredCredentials)) {
-      $cred = (Get-Credential -Message 'Input user credientials')
+      $cred = (Get-Credential -Message 'Input user credentials')
       if ((test-cred -Credentials $cred -Quite) -eq $false) {
-        Write-output "`nUser provided was not validated.`nPleae verify the following and try again:`n1. Name and password supplied are correct and up to date`n2. Network is connected`n3. Connection to corporate network is established for network/corporate users`n4. User supplied is not locked "
+        Write-output "`nUser provided was not validated.`nPlease verify the following and try again:`n1. Name and password supplied are correct and up to date`n2. Network is connected`n3. Connection to corporate network is established for network/corporate users`n4. User supplied is not locked "
         Start-Sleep -Seconds 2
         exit
       }
@@ -239,7 +239,7 @@ where SystemConfiguration.property=''version'''
           if (Test-Path -Path "$Path\FoxSitesInformation.csv") { Remove-Item -Path "$Path\FoxSitesInformation.csv" -Force }
           $SitesInfo | Select-Object -ExcludeProperty 'PSComputerName', 'RunspaceId', 'PSShowComputerName' | Out-File -FilePath "$Path\FoxSitesInformation.csv"
         }
-        Else { Write-output -InputObject 'No File Selected. Oborting.' }
+        Else { Write-output -InputObject 'No File Selected. Aborting.' }
         exit
       }
 
@@ -256,7 +256,7 @@ where SystemConfiguration.property=''version'''
           if (Test-Path -Path "$Path\FoxSitesInformation.xlsx") { Remove-Item -Path "$Path\FoxSitesInformation.xlsx" -Force }
           $SitesInfo | Select-Object -ExcludeProperty 'PSComputerName', 'RunspaceId', 'PSShowComputerName' | Export-Excel -Path "$Path\FoxSitesInformation.xlsx" -Title 'Your Fox Sites Information' -WorksheetName (Get-Date -Format 'dd/MM/yyyy') -TitleBold -AutoSize -FreezeTopRowFirstColumn -TableName SitesInformation -Show
         }
-        Else { Write-output -InputObject 'No File Selected. Oborting.' }
+        Else { Write-output -InputObject 'No File Selected. Aborting.' }
         exit
       }
       'QuickReview' { $SitesInfo | Select-Object -ExcludeProperty 'PSComputerName', 'RunspaceId', 'PSShowComputerName' | Out-GridView -Title 'Your Fox IIS Sites Information' }
@@ -267,11 +267,11 @@ where SystemConfiguration.property=''version'''
 
 function Convert-Int2Name {
   param (
-    [Parameter(HelpMessage = 'OutputType must macth 1,2,3 or 4', Mandatory, ValueFromPipeline)]$OutputType
+    [Parameter(HelpMessage = 'OutputType must match 1,2,3 or 4', Mandatory, ValueFromPipeline)]$OutputType
   )
   Process {
     if ($OutputType -notin (1, 2, 3, 4)) {
-      Write-output -ForegroundColor Red 'Invalid choise. Please select a valid number'
+      Write-output -ForegroundColor Red 'Invalid choice. Please select a valid number'
       $OutputType = Read-Host -Prompt "`nChoose an output Type.`nPress number to select`n1. HTML`n2. CSV`n3. EXCEL`n4. QUICKREVIEW (Export to console)`nYour Selection is" | Convert-Int2Name
     }
   }
