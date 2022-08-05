@@ -19,10 +19,16 @@ function Get-FoxSitesInformation
   EXCEL: CREATE XLSX FILE AT CHOSEN Location
   QUICKREVIEW: OUTPUT RESULTS TO CONSOLE
   
+
+
   .EXAMPLE
   Get-FoxSitesInformation -OutputType HTML
 
   #>
+
+  #DEBUG REQUIRMENTS
+  #find-module -Name ('ImportExcel','PSWriteHTML')  | Save-module -Path "$PSScriptRoot\Modules"
+
     param (
       [securestring]$SecuredCredentials,
       $Servers,
@@ -116,7 +122,7 @@ $ServersPath=$ServersPath+ '\IISServers.csv'
 if(Test-Path -Path $ServersPath){
   $Servers=import-CSV -Path $ServersPath | Select-Object -Unique -ExpandProperty 'Servers'
 }
-Else{  Write-host "Notice: This is a one-time Operation`n" -ForegroundColor Yellow
+Else{  Write-output "Notice: This is a one-time Operation`n" 
 'Servers' | Out-File -FilePath $ServersPath
 $Servers=(Read-Host -Prompt 'Enter your IIS Server names - Seperated by Commas (,)').Split(',') 
 Add-Content -Value $Servers -Path $ServersPath
@@ -126,7 +132,7 @@ Add-Content -Value $Servers -Path $ServersPath
 if (!($SecuredCredentials)) {
 $cred=(Get-Credential -Message 'Input user credientials')
 if((test-cred -Credentials $cred -Quite) -eq $false){
-  Write-Host "`nUser provided was not validated.`nPleae verify the following and try again:`n1. Name and password supplied are correct and up to date`n2. Network is connected`n3. Connection to corporate network is established for network/corporate users`n4. User supplied is not locked "
+  Write-output "`nUser provided was not validated.`nPleae verify the following and try again:`n1. Name and password supplied are correct and up to date`n2. Network is connected`n3. Connection to corporate network is established for network/corporate users`n4. User supplied is not locked "
   Start-Sleep -Seconds 2
   exit
 }
@@ -204,7 +210,7 @@ $SitesInfo=Invoke-Command -ComputerName $Servers -Credential $cred   -ScriptBloc
         $SitesInfo+=$Item
         }
     }
-    $SitesInfo
+    $SitesInfo | Format-Table -AutoSize
     ##Remote ENDs Here
 }
 Switch($OutputType){
@@ -237,7 +243,7 @@ Switch($OutputType){
     if($Path){
       if(Test-Path -Path "$Path\FoxSitesInformation.csv"){Remove-Item -Path "$Path\FoxSitesInformation.csv" -Force}
       $SitesInfo |Select-Object -ExcludeProperty 'PSComputerName','RunspaceId','PSShowComputerName' | Out-File -FilePath "$Path\FoxSitesInformation.csv"}
-    Else {Write-Host -Object 'No File Selected. Oborting.' -ForegroundColor Red}
+    Else {Write-output -Object 'No File Selected. Oborting.' -ForegroundColor Red}
     exit}
     
 
@@ -252,7 +258,7 @@ Switch($OutputType){
       if($Path){
         if(Test-Path -Path "$Path\FoxSitesInformation.xlsx"){Remove-Item -Path "$Path\FoxSitesInformation.xlsx" -Force}
         $SitesInfo |Select-Object -ExcludeProperty 'PSComputerName','RunspaceId','PSShowComputerName' | Export-Excel -Path "$Path\FoxSitesInformation.xlsx" -Title 'Your Fox Sites Information' -WorksheetName (Get-Date -Format 'dd/MM/yyyy') -TitleBold -AutoSize -FreezeTopRowFirstColumn -TableName SitesInformation -Show}
-      Else {Write-Host -Object 'No File Selected. Oborting.' -ForegroundColor Red}
+      Else {Write-output -Object 'No File Selected. Oborting.' -ForegroundColor Red}
       exit}
   'QuickReview'{$SitesInfo |Select-Object -ExcludeProperty 'PSComputerName','RunspaceId','PSShowComputerName' | Out-GridView -Title 'Your Fox IIS Sites Information'} 
   }
@@ -261,14 +267,14 @@ Switch($OutputType){
 }
 
   
-function convert-Int2Name
+function Convert-Int2Name
 {
     param (
       [Parameter(HelpMessage='OutputType must macth 1,2,3 or 4',Mandatory,ValueFromPipeline)]$OutputType
     )
     if($OutputType -notin (1,2,3,4)){
-      Write-Host -ForegroundColor Red 'Invalid choise. Please select a valid number'
-      $OutputType=Read-Host -Prompt "`nChoose an output Type.`nPress number to select`n1. HTML`n2. CSV`n3. EXCEL`n4. QUICKREVIEW (Export to console)`nYour Selection is" | convert-Int2Name
+      Write-output -ForegroundColor Red 'Invalid choise. Please select a valid number'
+      $OutputType=Read-Host -Prompt "`nChoose an output Type.`nPress number to select`n1. HTML`n2. CSV`n3. EXCEL`n4. QUICKREVIEW (Export to console)`nYour Selection is" | Convert-Int2Name
 
     }
     Switch($OutputType){
@@ -280,31 +286,16 @@ function convert-Int2Name
   return $OutputType
 }
 
-function install-SelectedModules
+function Import-RequiredModules
 {
-    param (
-      [Parameter(HelpMessage='Install required modules based on the choise',Mandatory,ValueFromPipeline)]$OutputType
-    )
-    if($OutputType -notin ('HTML','EXCEL')){ return $OutputType }
-    elseif($OutputType -eq 'HTML'){
-      $Module='PSWriteHTML'
-      $VersionRequired=0.0.175
-    }
-    Else{
-      $Module='ImportExcel'
-      $VersionRequired=7.8.0
-    }
+  Get-ChildItem -Path "$PSScriptRoot\Modules" -filter '*.psd1' -Recurse -Depth 2 | ForEach-Object{
+  Write-Output -InputObject ('Importing module ' + ($_.Name).split('.')[0] )
+  Import-Module -Name $_.FullName
+  }
 
-    if((( Get-Module -Name $Module).Version -lt $VersionRequired ) -or (( Get-Module -Name $Module ) -eq $false ) ) 
-    #If module does not exist or version lower then required
-    {
-      Register-PSRepository -Name 'FoxSitesInformation' -SourceLocation "$PSScriptRoot\Modules" -InstallationPolicy Trusted
-      Install-Module -Name $Module -Repository 'FoxSitesInformation'
-      Import-Module -name $Module
-    }
-
-  return $OutputType
 }
 
 Clear-Host
-Read-Host -Prompt "Choose an output Type.`nPress number to select`n1. HTML`n2. CSV`n3. EXCEL`n4. QUICKREVIEW (Export to console)`nYour Selection is" | convert-Int2Name | install-SelectedModules | Get-FoxSitesInformation
+Write-Output -InputObject 'Importing required modules'
+Import-RequiredModules
+Read-Host -Prompt "`nChoose an output Type.`nPress number to select`n1. HTML`n2. CSV`n3. EXCEL`n4. QUICKREVIEW (Export to console)`nYour Selection is" | Convert-Int2Name | Get-FoxSitesInformation
