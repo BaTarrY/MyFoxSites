@@ -11,5 +11,8 @@
         "securestring",
         "QUICKREVIEW",
         "computername"
+    ],
+    "cSpell.enableFiletypes": [
+        "powershell"
     ]
 }
