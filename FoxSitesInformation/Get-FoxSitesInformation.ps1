@@ -56,49 +56,55 @@ function Get-FoxSitesInformation {
         $Credentials,
         [switch]$Quite
       )
-      $Domain = $null
-      $Root = $null
-      $Username = $null
-      $Password = $null
+      Begin {
+        $Domain = $null
+        $Root = $null
+        $Username = $null
+        $Password = $null
+      }
+      Process
+      {
+        If ($null -eq $Credentials) {
+          Try {
+            $Credentials = Get-Credential "domain\$env:username" -ErrorAction Stop
+          }
+          Catch {
+            $ErrorMsg = $_.Exception.Message
+            Write-Warning "Failed to validate credentials: $ErrorMsg "
+            Pause
+            Break
+          }
+        }
 
-      If ($null -eq $Credentials) {
+        # Checking module
         Try {
-          $Credentials = Get-Credential "domain\$env:username" -ErrorAction Stop
+          # Split username and password
+          $Username = $credentials.username
+          $Password = $credentials.GetNetworkCredential().password
+
+          # Get Domain
+          $Root = "LDAP://" + ([ADSI]'').distinguishedName
+          $Domain = New-Object System.DirectoryServices.DirectoryEntry($Root, $UserName, $Password)
         }
         Catch {
-          $ErrorMsg = $_.Exception.Message
-          Write-Warning "Failed to validate credentials: $ErrorMsg "
-          Pause
-          Break
+          $_.Exception.Message
+          Continue
         }
       }
-
-      # Checking module
-      Try {
-        # Split username and password
-        $Username = $credentials.username
-        $Password = $credentials.GetNetworkCredential().password
-
-        # Get Domain
-        $Root = "LDAP://" + ([ADSI]'').distinguishedName
-        $Domain = New-Object System.DirectoryServices.DirectoryEntry($Root, $UserName, $Password)
-      }
-      Catch {
-        $_.Exception.Message
-        Continue
-      }
-
-      If (!$domain) {
-        Write-Warning "Something went wrong"
-      }
-      Else {
-        If ($null -ne $domain.name) {
-          if ($Quite) { return $true }
-          else { return "Authenticated" }
+      END
+      {
+        If (!$domain) {
+          Write-Warning "Something went wrong"
         }
         Else {
-          if ($Quite) { return $false }
-          else { return "Not authenticated" }
+          If ($null -ne $domain.name) {
+            if ($Quite) { return $true }
+            else { return "Authenticated" }
+          }
+          Else {
+            if ($Quite) { return $false }
+            else { return "Not authenticated" }
+          }
         }
       }
     }
