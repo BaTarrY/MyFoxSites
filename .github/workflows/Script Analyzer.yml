@@ -12,12 +12,8 @@ name: PSScriptAnalyzer
 on:
   push:
     branches: [ master ]
-    paths:
-      - 'FoxHelper/**'
   pull_request:
     branches: [ master ]
-    paths:
-      - 'FoxHelper/**'
   schedule:
     - cron: '30 1 * * 0'
 
