@@ -39,6 +39,7 @@ function Get-FoxSitesInformation {
     function Test-Cred {
 
       [CmdletBinding()]
+      [OutputType([Bool])]
 
       Param (
         [Parameter(
@@ -53,7 +54,6 @@ function Get-FoxSitesInformation {
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
         $Credentials,
-        [switch]$Quite
       )
       Begin {
         $Domain = $null
@@ -61,8 +61,7 @@ function Get-FoxSitesInformation {
         $Username = $null
         $Password = $null
       }
-      Process
-      {
+      Process {
         If ($null -eq $Credentials) {
           Try {
             $Credentials = Get-Credential "domain\$env:username" -ErrorAction Stop
@@ -90,19 +89,16 @@ function Get-FoxSitesInformation {
           Continue
         }
       }
-      END
-      {
+      END {
         If (!$domain) {
           Write-Warning "Something went wrong"
         }
         Else {
           If ($null -ne $domain.name) {
-            if ($Quite) { return $true }
-            else { return "Authenticated" }
+            return $true
           }
           Else {
-            if ($Quite) { return $false }
-            else { return "Not authenticated" }
+            return $false
           }
         }
       }
