@@ -238,7 +238,7 @@ where SystemConfiguration.property=''version'''
         if (Test-Path -Path "$Path\FoxSitesInformation.csv") { Remove-Item -Path "$Path\FoxSitesInformation.csv" -Force }
         $SitesInfo | Select-Object -ExcludeProperty 'PSComputerName', 'RunspaceId', 'PSShowComputerName' | Out-File -FilePath "$Path\FoxSitesInformation.csv"
       }
-      Else { Write-output -Object 'No File Selected. Oborting.' }
+      Else { Write-output -InputObject 'No File Selected. Oborting.'  }
       exit
     }
 
@@ -255,7 +255,7 @@ where SystemConfiguration.property=''version'''
         if (Test-Path -Path "$Path\FoxSitesInformation.xlsx") { Remove-Item -Path "$Path\FoxSitesInformation.xlsx" -Force }
         $SitesInfo | Select-Object -ExcludeProperty 'PSComputerName', 'RunspaceId', 'PSShowComputerName' | Export-Excel -Path "$Path\FoxSitesInformation.xlsx" -Title 'Your Fox Sites Information' -WorksheetName (Get-Date -Format 'dd/MM/yyyy') -TitleBold -AutoSize -FreezeTopRowFirstColumn -TableName SitesInformation -Show
       }
-      Else { Write-output -Object 'No File Selected. Oborting.' }
+      Else { Write-output -InputObject 'No File Selected. Oborting.' }
       exit
     }
     'QuickReview' { $SitesInfo | Select-Object -ExcludeProperty 'PSComputerName', 'RunspaceId', 'PSShowComputerName' | Out-GridView -Title 'Your Fox IIS Sites Information' }
