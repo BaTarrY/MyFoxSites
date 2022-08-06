@@ -39,7 +39,7 @@ jobs:
           'Verifying Module was saved successfully'
           test-path -path .\Modules\$Module
           }
-        shell: PowerShell
+        shell: pwsh
 
       - name: Compile EXE
         working-directory: .
@@ -52,7 +52,7 @@ jobs:
           Invoke-PS2EXE -inputFile .\FoxSitesInformation\Get-FoxSitesInformation.ps1 -outputFile .\FoxSitesInformation\Get-FoxSitesInformation.exe -credentialGUI -iconFile .\ExternalResources\Icon\Favicon.ico  -title 'Fox Sites Information Generator' -company 'Elior Machlev' -product 'Fox Sites Information' -version 1 -exitOnCancel -requireAdmin  -longPaths -prepareDebug -Verbose
           'Verifying Existance of EXE'
           test-path -path .\FoxSitesInformation\Get-FoxSitesInformation.exe
-        shell: PowerShell
+        shell: pwsh
 
       - name: Create Zip
         working-directory: .
@@ -61,7 +61,7 @@ jobs:
         run: |
           'Compressing to Zip File'
           Compress-Archive -Path .\FoxSitesInformation -DestinationPath .\FoxSitesInformation.zip -CompressionLevel Optimal -Verbose
-        shell: PowerShell
+        shell: pwsh
 
       - name: Prepare to upload release
         run: cargo build --release --locked
