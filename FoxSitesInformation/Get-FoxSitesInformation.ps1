@@ -294,17 +294,6 @@ function invoke-RunAsAdmin {
 	else {
 		return $false
 	}
-
-
-
-		Switch ($OutputType) {
-	  '1' { $OutputType = 'HTML' }
-	  '2' { $OutputType = 'CSV' }
-	  '3' { $OutputType = 'EXCEL' }
-	  '4' { $OutputType = 'QUICKREVIEW' }
-		}
-		return $OutputType
-
 }
 
 if ($MyInvocation.MyCommand.CommandType -eq "ExternalScript")
