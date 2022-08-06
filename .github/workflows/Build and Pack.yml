@@ -48,7 +48,7 @@ jobs:
           'Impoting Module PS2EXE'
           import-module -Name ps2exe
           'Creating EXE'
-          Invoke-PS2EXE -inputFile .\FoxSitesInformation\Get-FoxSitesInformation.ps1 -outputFile .\FoxSitesInformation\Get-FoxSitesInformation.exe -iconFile .\ExternalResources\Icon\Favicon.ico  -title 'Fox Sites Information Generator' -version 1 -requireAdmin -Verbose
+          Invoke-PS2EXE -inputFile .\FoxSitesInformation\Get-FoxSitesInformation.ps1 -outputFile .\FoxSitesInformation\Get-FoxSitesInformation.exe -iconFile .\ExternalResources\Icon\Favicon.ico  -title 'Fox Sites Information Generator' -version 1 -requireAdmin -Verbose -ErrorAction Stop
           'Verifying Existance of EXE'
           test-path -path .\FoxSitesInformation\Get-FoxSitesInformation.exe
           }
