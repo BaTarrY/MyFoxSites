@@ -51,7 +51,7 @@ jobs:
         with:
           file: .\FoxSitesInformation.zip
           asset_name: FoxSitesInformation.zip
-          release_name: Version X
+          release_name: Version 1.0.${{ env.GITHUB_RUN_NUMBER }}
           body: '**Full Changelog**: [Release Notes](https://github.com/BaTarrY/MyFoxSites/compare/Prerelease...Release)'
           prerelease: false
 
