@@ -23,7 +23,7 @@ jobs:
   Packaging:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Creating Environments
         uses: actions/checkout@v2
 
       - name: Insert Required Modules
@@ -36,6 +36,39 @@ jobs:
           $Module=$Module -replace '@{Modules=','' -replace '}',''
           Write-Output -InputObject "Saving $Module"
           Find-module -Name $Module  | Save-Module -Path .\Modules -Verbose
+          'Verifying Module was saved successfully'
+          test-path -path .\Modules\$Module
           }
-
         shell: PowerShell
+
+      - name: Compile EXE
+        working-directory: .
+        env:
+          NUGET_KEY: ${{ secrets.NUGET_KEY }}
+        run: |
+          'Installing Module PS2EXE'
+          Install-Module -Name ps2exe
+          'Creating EXE'
+          Invoke-PS2EXE -inputFile .\FoxSitesInformation\Get-FoxSitesInformation.ps1 -outputFile .\FoxSitesInformation\Get-FoxSitesInformation.exe -credentialGUI -iconFile .\ExternalResources\Icon\Favicon.ico  -title 'Fox Sites Information Generator' -company 'Elior Machlev' -product 'Fox Sites Information' -version 1 -exitOnCancel -requireAdmin  -longPaths -prepareDebug -Verbose
+          'Verifying Existance of EXE'
+          test-path -path .\FoxSitesInformation\Get-FoxSitesInformation.exe
+        shell: PowerShell
+
+      - name: Create Zip
+        working-directory: .
+        env:
+          NUGET_KEY: ${{ secrets.NUGET_KEY }}
+        run: |
+          'Compressing to Zip File'
+          Compress-Archive -Path .\FoxSitesInformation -DestinationPath .\FoxSitesInformation.zip -CompressionLevel Optimal -Verbose
+        shell: PowerShell
+
+      - name: Prepare to upload release
+        run: cargo build --release --locked
+
+      - name: Upload Release to Github Repository
+        uses: svenstaro/upload-release-action@v2
+        with:
+          file: .\FoxSitesInformation\Get-FoxSitesInformation.exe
+          asset_name: Get-FoxSitesInformation.exe
+          tag: Zip
