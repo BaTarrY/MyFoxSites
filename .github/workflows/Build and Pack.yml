@@ -27,7 +27,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Insert Required Modules
-        working-directory: .\FoxSitesInformation
+        working-directory: ./FoxSitesInformation
         run: |
           $Modules=Import-Csv -Path .\Modules\PlaceHolderForModules.txt
           Foreach ($Module in $Modules){
