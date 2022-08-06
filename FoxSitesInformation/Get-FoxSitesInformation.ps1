@@ -308,7 +308,7 @@ function Import-RequiredModules {
 }
 
 Clear-Host
-$admin = invoke-RunAsAdmin | foreach-object {Write-Output "Verifying administrator rights: $_"}
+$admin = invoke-RunAsAdmin | foreach-object {Write-Host "Verifying administrator rights: $_"}
 if(-not $admin)
 {
 	write-output -InputObject "Administrator rights are mandatory.`nPlease run again as Administrator."
