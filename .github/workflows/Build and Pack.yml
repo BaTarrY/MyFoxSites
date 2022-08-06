@@ -48,6 +48,6 @@ jobs:
       - name: Upload Release to Github Repository
         uses: svenstaro/upload-release-action@v2
         with:
-          file: .\FoxSitesInformation\Get-FoxSitesInformation.exe
-          asset_name: Get-FoxSitesInformation.exe
-          tag: Zip
+          file: .\FoxSitesInformation\.\FoxSitesInformation.zip
+          asset_name: FoxSitesInformation.zip
+          tag: Release
