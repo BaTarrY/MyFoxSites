@@ -45,9 +45,6 @@ jobs:
           Compress-Archive -Path .\FoxSitesInformation -DestinationPath .\FoxSitesInformation.zip -CompressionLevel Optimal -Verbose
         shell: pwsh
 
-      - name: Prepare to upload release
-        run: cargo build --release --locked
-
       - name: Upload Release to Github Repository
         uses: svenstaro/upload-release-action@v2
         with:
