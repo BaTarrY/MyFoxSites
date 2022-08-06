@@ -38,19 +38,6 @@ jobs:
           test-path -path .\Modules\$Module}
         shell: pwsh
 
-      - name: Compile EXE
-        working-directory: .
-        run: |
-          'Installing Module PS2EXE'
-          Install-Module -Name ps2exe -force
-          'Impoting Module PS2EXE'
-          import-module -Name ps2exe
-          'Creating EXE'
-          Invoke-PS2EXE -inputFile .\FoxSitesInformation\Get-FoxSitesInformation.ps1 -outputFile .\FoxSitesInformation\Get-FoxSitesInformation.exe -iconFile .\ExternalResources\Icon\Favicon.ico  -title 'Fox Sites Information Generator' -version 1 -requireAdmin -Verbose -ErrorAction Stop
-          'Verifying Existance of EXE'
-          test-path -path .\FoxSitesInformation\Get-FoxSitesInformation.exe
-        shell: pwsh
-
       - name: Create Zip
         working-directory: .
         run: |
