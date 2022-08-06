@@ -42,7 +42,6 @@ jobs:
       - name: Compile EXE
         working-directory: .
         run: |
-          try{
           'Installing Module PS2EXE'
           Install-Module -Name ps2exe -force
           'Impoting Module PS2EXE'
@@ -51,11 +50,6 @@ jobs:
           Invoke-PS2EXE -inputFile .\FoxSitesInformation\Get-FoxSitesInformation.ps1 -outputFile .\FoxSitesInformation\Get-FoxSitesInformation.exe -iconFile .\ExternalResources\Icon\Favicon.ico  -title 'Fox Sites Information Generator' -version 1 -requireAdmin -Verbose -ErrorAction Stop
           'Verifying Existance of EXE'
           test-path -path .\FoxSitesInformation\Get-FoxSitesInformation.exe
-          }
-          catch{
-          Write-output "An Error occured during reset all users passwords. See full expection below.`nExecption:"$Error[0].Exception"`nTargetObject:"$Error[0].TargetObject"`nInvocationInfo:"$Error[0].InvocationInfo"`nSource"$Error[0].Source
-          exit 101
-          }
         shell: pwsh
 
       - name: Create Zip
