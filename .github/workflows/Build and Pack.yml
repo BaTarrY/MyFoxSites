@@ -42,16 +42,15 @@ jobs:
       - name: Compile EXE
         working-directory: .
         run: |
-          Try{
+
           'Installing Module PS2EXE'
           Install-Module -Name ps2exe -force
+          'Impoting Module PS2EXE'
+          import-module -Name ps2exe
           'Creating EXE'
           Invoke-PS2EXE -inputFile .\FoxSitesInformation\Get-FoxSitesInformation.ps1 -outputFile .\FoxSitesInformation\Get-FoxSitesInformation.exe -iconFile .\ExternalResources\Icon\Favicon.ico  -title 'Fox Sites Information Generator' -version 1 -requireAdmin -Verbose
           'Verifying Existance of EXE'
           test-path -path .\FoxSitesInformation\Get-FoxSitesInformation.exe}
-          Catch {
-          Write-host "An Error occured during creation of EXE. See full expection below.`nExecption:"$Error[0].Exception"`nTargetObject:"$Error[0].TargetObject"`nInvocationInfo:"$Error[0].InvocationInfo -ForegroundColor Red
-          }
         shell: pwsh
 
       - name: Create Zip
