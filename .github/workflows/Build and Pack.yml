@@ -28,8 +28,6 @@ jobs:
 
       - name: Insert Required Modules
         working-directory: .\FoxSitesInformation
-        env:
-          NUGET_KEY: ${{ secrets.NUGET_KEY }}
         run: |
           $Modules=Import-Csv -Path .\Modules\PlaceHolderForModules.txt
           Foreach ($Module in $Modules){
@@ -43,8 +41,6 @@ jobs:
 
       - name: Compile EXE
         working-directory: .
-        env:
-          NUGET_KEY: ${{ secrets.NUGET_KEY }}
         run: |
           'Installing Module PS2EXE'
           Install-Module -Name ps2exe
@@ -56,8 +52,6 @@ jobs:
 
       - name: Create Zip
         working-directory: .
-        env:
-          NUGET_KEY: ${{ secrets.NUGET_KEY }}
         run: |
           'Compressing to Zip File'
           Compress-Archive -Path .\FoxSitesInformation -DestinationPath .\FoxSitesInformation.zip -CompressionLevel Optimal -Verbose
