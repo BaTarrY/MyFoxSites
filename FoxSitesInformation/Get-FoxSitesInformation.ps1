@@ -286,6 +286,27 @@ function Convert-Int2Name {
 	}
 }
 
+function invoke-RunAsAdmin {
+
+	if ((New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) { ##If administrator
+		return $true
+	}
+	else {
+		return $false
+	}
+
+
+
+		Switch ($OutputType) {
+	  '1' { $OutputType = 'HTML' }
+	  '2' { $OutputType = 'CSV' }
+	  '3' { $OutputType = 'EXCEL' }
+	  '4' { $OutputType = 'QUICKREVIEW' }
+		}
+		return $OutputType
+
+}
+
 if ($MyInvocation.MyCommand.CommandType -eq "ExternalScript")
 { $ScriptPath = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition }
 else
@@ -298,6 +319,12 @@ function Import-RequiredModules {
 }
 
 Clear-Host
-Write-Output -InputObject 'Importing required modules'
+$admin = invoke-RunAsAdmin | foreach-object {Write-Host "Verifying administrator rights: $_"}
+if(-not $admin)
+{
+	write-output -InputObject "Administrator rights are mandatory.`nPlease run again as Administrator."
+	exit 5;
+}
+Write-Output -InputObject "`nImporting required modules"
 Import-RequiredModules
 Read-Host -Prompt "`nChoose an output Type.`nPress number to select`n1. HTML`n2. CSV`n3. EXCEL`n4. QUICKREVIEW (Export to console)`nYour Selection is" | Convert-Int2Name | Get-FoxSitesInformation
