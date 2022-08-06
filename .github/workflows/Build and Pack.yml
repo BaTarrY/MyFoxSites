@@ -42,7 +42,9 @@ jobs:
         working-directory: .
         run: |
           'Compressing to Zip File'
-          Compress-Archive -Path .\FoxSitesInformation -DestinationPath .\FoxSitesInformation.zip -CompressionLevel Optimal -Verbose
+          Compress-Archive -Path .\FoxSitesInformation -DestinationPath .\FoxSitesInformation.zip -CompressionLevel Optimal
+          'Testing Zip creation'
+          test-path -path .\FoxSitesInformation.zip
         shell: pwsh
 
       - name: Upload Release to Github Repository
