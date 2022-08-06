@@ -45,8 +45,8 @@ jobs:
           'Installing Module PS2EXE'
           Install-Module -Name ps2exe -force
           'Creating EXE'
-          Invoke-PS2EXE -inputFile .\FoxSitesInformation\Get-FoxSitesInformation.ps1 -outputFile .\FoxSitesInformation\Get-FoxSitesInformation.exe -credentialGUI -iconFile .\ExternalResources\Icon\Favicon.ico  -title 'Fox Sites Information Generator' -company 'Elior Machlev' -product 'Fox Sites Information' -version 1 -exitOnCancel -requireAdmin  -longPaths -prepareDebug -Verbose
-          'Verifying Existance of EXE' -verbose
+          Invoke-PS2EXE -inputFile .\FoxSitesInformation\Get-FoxSitesInformation.ps1 -outputFile .\FoxSitesInformation\Get-FoxSitesInformation.exe -credentialGUI -iconFile .\ExternalResources\Icon\Favicon.ico  -title 'Fox Sites Information Generator' -company 'Elior Machlev' -product 'Fox Sites Information' -version 1 -requireAdmin -longPaths -Verbose
+          'Verifying Existance of EXE'
           test-path -path .\FoxSitesInformation\Get-FoxSitesInformation.exe
         shell: pwsh
 
