@@ -35,7 +35,7 @@ jobs:
           Write-Output -InputObject "Saving $Module"
           Find-module -Name $Module  | Save-Module -Path .\Modules -Verbose
           'Verifying Module was saved successfully'
-          test-path -path .\Modules\$Module
+          test-path -path .\Modules\$Module}
         shell: pwsh
 
       - name: Compile EXE
