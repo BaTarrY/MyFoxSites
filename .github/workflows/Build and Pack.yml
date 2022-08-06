@@ -50,9 +50,12 @@ jobs:
           'Creating EXE'
           Invoke-PS2EXE -inputFile .\FoxSitesInformation\Get-FoxSitesInformation.ps1 -outputFile .\FoxSitesInformation\Get-FoxSitesInformation.exe -iconFile .\ExternalResources\Icon\Favicon.ico  -title 'Fox Sites Information Generator' -version 1 -requireAdmin -Verbose
           'Verifying Existance of EXE'
-          test-path -path .\FoxSitesInformation\Get-FoxSitesInformation.exe}
-          catch{Write-host "An Error occured during reset all users passwords. See full expection below.`nExecption:"$Error[0].Exception"`nTargetObject:"$Error[0].TargetObject"`nInvocationInfo:"$Error[0].InvocationInfo"`nSource"$Error[0].Source -ForegroundColor Red
-          exit 101}
+          test-path -path .\FoxSitesInformation\Get-FoxSitesInformation.exe
+          }
+          catch{
+          Write-output "An Error occured during reset all users passwords. See full expection below.`nExecption:"$Error[0].Exception"`nTargetObject:"$Error[0].TargetObject"`nInvocationInfo:"$Error[0].InvocationInfo"`nSource"$Error[0].Source
+          exit 101
+          }
         shell: pwsh
 
       - name: Create Zip
