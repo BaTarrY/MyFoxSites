@@ -50,7 +50,7 @@ jobs:
           'Creating EXE'
           Invoke-PS2EXE -inputFile .\FoxSitesInformation\Get-FoxSitesInformation.ps1 -outputFile .\FoxSitesInformation\Get-FoxSitesInformation.exe -iconFile .\ExternalResources\Icon\Favicon.ico  -title 'Fox Sites Information Generator' -version 1 -requireAdmin -Verbose
           'Verifying Existance of EXE'
-          test-path -path .\FoxSitesInformation\Get-FoxSitesInformation.exe}
+          test-path -path .\FoxSitesInformation\Get-FoxSitesInformation.exe
         shell: pwsh
 
       - name: Create Zip
