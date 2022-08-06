@@ -51,4 +51,7 @@ jobs:
         with:
           file: .\FoxSitesInformation.zip
           asset_name: FoxSitesInformation.zip
-          tag: Release
+          release_name: Fox Sites Information Generator
+          tag: Prerelease
+          prerelease: true
+
