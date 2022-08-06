@@ -286,8 +286,12 @@ function Convert-Int2Name {
 	}
 }
 
+if ($MyInvocation.MyCommand.CommandType -eq "ExternalScript")
+{ $ScriptPath = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition }
+else
+{ $ScriptPath = Split-Path -Parent -Path ([Environment]::GetCommandLineArgs()[0]) }
 function Import-RequiredModules {
-	Get-ChildItem -Path "$PSScriptRoot\Modules" -filter '*.psd1' -Recurse -Depth 2 | ForEach-Object {
+	Get-ChildItem -Path "$ScriptPath\Modules" -filter '*.psd1' -Recurse -Depth 2 | ForEach-Object {
 		Write-Output -InputObject ('Importing module ' + ($_.Name).split('.')[0] )
 		Import-Module -Name $_.FullName
 	}
