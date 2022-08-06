@@ -36,7 +36,6 @@ jobs:
           Find-module -Name $Module  | Save-Module -Path .\Modules -Verbose
           'Verifying Module was saved successfully'
           test-path -path .\Modules\$Module
-          }
         shell: pwsh
 
       - name: Compile EXE
