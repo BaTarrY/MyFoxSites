@@ -44,6 +44,8 @@ jobs:
           Compress-Archive -Path .\FoxSitesInformation -DestinationPath .\FoxSitesInformation.zip -CompressionLevel Optimal
           'Testing Zip creation'
           test-path -path .\FoxSitesInformation.zip
+          $null=  test-path -path .\FoxSitesInformation.zip | foreach-object {Write-Host "Verifying Zip was created successfully: $_"
+          if ($_ -eq $false){exit 2}}}
         shell: pwsh
 
       - name: Upload Release to Github Repository
@@ -61,8 +63,7 @@ jobs:
           $SubVersion=0
           [String]$Version="$MainVersion.$SubVersion.$Hotfix"
           [string]$Body='**Full Changelog**: [Release Notes](https://github.com/BaTarrY/MyFoxSites/compare/Prerelease...Release)'
-          $newGitHubReleaseParameters =
-          @{
+          $newGitHubReleaseParameters = @{
               GitHubUsername = 'BaTarrY'
               GitHubRepositoryName = 'MyFoxSites'
               GitHubAccessToken = $UploadKey
