@@ -45,7 +45,7 @@ jobs:
           'Testing Zip creation'
           test-path -path .\FoxSitesInformation.zip
           $null=  test-path -path .\FoxSitesInformation.zip | foreach-object {Write-Host "Verifying Zip was created successfully: $_"
-          if ($_ -eq $false){exit 2}}}
+          if ($_ -eq $false){exit 2}}
         shell: pwsh
 
       - name: Upload Release to Github Repository
