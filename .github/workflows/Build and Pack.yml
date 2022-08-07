@@ -42,15 +42,13 @@ jobs:
         run: |
           'Compressing to Zip File'
           Compress-Archive -Path .\FoxSitesInformation -DestinationPath .\FoxSitesInformation.zip -CompressionLevel Optimal
-          'Testing Zip creation'
-          test-path -path .\FoxSitesInformation.zip
           $null=  test-path -path .\FoxSitesInformation.zip | foreach-object {Write-Host "Verifying Zip was created successfully: $_"
           if ($_ -eq $false){exit 2}}
         shell: pwsh
 
       - name: Upload Release to Github Repository
         env:
-         UploadKey: ${{ secrets.UPLOADKEY }}
+         UPLOADKEY: ${{ secrets.UPLOADKEY }}
          Hotfix: ${{ env.GITHUB_RUN_NUMBER }}
         working-directory: .
         run: |
@@ -61,14 +59,14 @@ jobs:
           'Start upload sequence'
           $MainVersion=1
           $SubVersion=0
-          [String]$Version="$MainVersion.$SubVersion.$Hotfix"
+          [String]$Version="$MainVersion.$SubVersion.$env:UPLOADKEY"
           [string]$Body='**Full Changelog**: [Release Notes](https://github.com/BaTarrY/MyFoxSites/compare/Prerelease...Release)'
           $newGitHubReleaseParameters = @{
               GitHubUsername = 'BaTarrY'
               GitHubRepositoryName = 'MyFoxSites'
-              GitHubAccessToken = $UploadKey
+              GitHubAccessToken = "$env:UPLOADKEY"
               ReleaseName = "My Fox Sites Generator v$Version"
-              TagName = "v$Version"
+              TagName = "v$env:UPLOADKEY"
               ReleaseNotes = $Body
               AssetFilePaths = .\FoxSitesInformation.zip
               IsPreRelease = $false
