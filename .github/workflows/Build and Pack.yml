@@ -59,7 +59,7 @@ jobs:
           'Start upload sequence'
           $MainVersion=1
           $SubVersion=0
-          [String]$Version=$MainVersion + '.' + $SubVersion + '.' + $Hotfix
+          [String]$Version="$MainVersion.$SubVersion.$Hotfix"
           [string]$Body='**Full Changelog**: [Release Notes](https://github.com/BaTarrY/MyFoxSites/compare/Prerelease...Release)'
           $newGitHubReleaseParameters =
           @{
