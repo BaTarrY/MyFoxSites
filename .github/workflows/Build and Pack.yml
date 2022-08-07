@@ -37,15 +37,6 @@ jobs:
           if ($_ -eq $false){exit 1}}}
         shell: pwsh
 
-      - name: Create Zip
-        working-directory: .
-        run: |
-          'Compressing to Zip File'
-          Compress-Archive -Path .\MyFoxSitesGenerator -DestinationPath .\MyFoxSitesGenerator.zip -CompressionLevel Optimal
-          $null=  test-path -path .\MyFoxSitesGenerator.zip | foreach-object {Write-Host "Verifying Zip was created successfully: $_"
-          if ($_ -eq $false){exit}}
-        shell: pwsh
-      
       - name: Compile EXE
         env:
             Hotfix: ${{ GITHUB.RUN_NUMBER }}
@@ -65,6 +56,15 @@ jobs:
           $null= test-path -path ".\MyFoxSitesGenerator\MyFoxSites_Generator.exe" | foreach-object {Write-Host "Verifying EXE was created successfully: $_"
           if ($_ -eq $false){exit}}
         shell: powershell
+
+      - name: Create Zip
+        working-directory: .
+        run: |
+          'Compressing to Zip File'
+          Compress-Archive -Path .\MyFoxSitesGenerator -DestinationPath .\MyFoxSitesGenerator.zip -CompressionLevel Optimal
+          $null=  test-path -path .\MyFoxSitesGenerator.zip | foreach-object {Write-Host "Verifying Zip was created successfully: $_"
+          if ($_ -eq $false){exit}}
+        shell: pwsh
 
       - name: Upload Release to Github Repository
         env:
