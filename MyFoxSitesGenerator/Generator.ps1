@@ -319,8 +319,6 @@ where SystemConfiguration.property=''version'''
 				return
 			}
 		}
-
-		Clear-Host
 		Invoke-ExecutionPolicyInput
 		$admin = invoke-RunAsAdmin | foreach-object { Write-Output "Verifying administrator rights: $_" }
 		if (-not $admin) {
