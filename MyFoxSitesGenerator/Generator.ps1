@@ -225,7 +225,7 @@ where SystemConfiguration.property=''version'''
 						$replace = '<!-- End OF DisableCaching -->' + '
 		  Updated at: ' + $date
 						$HTMLContent = $HTMLContent -replace '<!-- End OF DisableCaching -->', $replace | Out-File -FilePath $temp -Force
-						Invoke-Item -Path $temp
+						#Invoke-Item -Path $temp
 					}
 					'CSV' {
 						$SitesInfo = $SitesInfo | Format-Table
