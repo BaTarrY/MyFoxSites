@@ -62,6 +62,7 @@ jobs:
           [String]$Version=$MainVersion + '.' + $SubVersion + '.' + $Hotfix
 
           New-GitHubRelease -GitHubUsername 'BaTarrY' -GitHubRepositoryName 'MyFoxSites' -GitHubAccessToken $UploadKey -TagName 'v$Version'
+          [string]$Body='**Full Changelog**: [Release Notes](https://github.com/BaTarrY/MyFoxSites/compare/Prerelease...Release)'
           $newGitHubReleaseParameters =
           @{
               GitHubUsername = 'BaTarrY'
@@ -69,7 +70,7 @@ jobs:
               GitHubAccessToken = '$UploadKey
               ReleaseName = "My Fox Sites Generator v$Version"
               TagName = "v1.0.0"
-              ReleaseNotes = '**Full Changelog**: [Release Notes](https://github.com/BaTarrY/MyFoxSites/compare/Prerelease...Release)'
+              ReleaseNotes = $Body
               AssetFilePaths = .\FoxSitesInformation.zip
               IsPreRelease = $false
               IsDraft = $false
