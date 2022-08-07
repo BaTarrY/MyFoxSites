@@ -68,7 +68,7 @@ jobs:
               ReleaseName = "My Fox Sites Generator v$Version"
               TagName = $Version
               ReleaseNotes = $Body
-              AssetFilePaths = .\FoxSitesInformation.zip
+              AssetFilePaths = @(.\FoxSitesInformation.zip)
               IsPreRelease = $false
               IsDraft = $false
           }
