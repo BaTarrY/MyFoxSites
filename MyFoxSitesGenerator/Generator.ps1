@@ -119,7 +119,7 @@ function Invoke-MyFoxSitesGenerator {
 
 		if (!($SecuredCredentials)) {
 	  $cred = (Get-Credential -Message 'Input user credentials')
-	  if ((test-cred -Credentials $cred -Quite) -eq $false) {
+	  if ((test-cred -Credentials $cred) -eq $false) {
 				Write-output "`nUser provided was not validated.`nPlease verify the following and try again:`n1. Name and password supplied are correct and up to date`n2. Network is connected`n3. Connection to corporate network is established for network/corporate users`n4. User supplied is not locked "
 				Start-Sleep -Seconds 2
 				exit
@@ -200,11 +200,11 @@ where SystemConfiguration.property=''version'''
 					$SitesInfo += $Item
 				}
 	  }
-	  $SitesInfo | Format-Table -AutoSize
+	  $SitesInfo
 	  ##Remote ENDs Here
 		}
 		Switch ($OutputType) {
-	  'Console' { $SitesInfo | Select-Object -ExcludeProperty 'PSComputerName', 'RunspaceId' | Format-Table -AutoSize -Force }
+	  'Console' { $SitesInfo | Select-Object -ExcludeProperty 'PSComputerName', 'RunspaceId' | Format-Table -Force }
 	  'HTML' {
 				$Temp = [Environment]::GetFolderPath('MyDocuments')
 				$Temp = $Temp + '\My Sites Information.HTML'
@@ -226,6 +226,7 @@ where SystemConfiguration.property=''version'''
 				Invoke-Item -Path $temp
 	  }
 	  'CSV' {
+				$SitesInfo=$SitesInfo | Format-Table
 				Add-Type -AssemblyName System.Windows.Forms
 				$browser = New-Object -TypeName System.Windows.Forms.FolderBrowserDialog
 				$null = $browser.ShowDialog()
@@ -242,6 +243,7 @@ where SystemConfiguration.property=''version'''
 
 
 	  'Excel' {
+				$SitesInfo=$SitesInfo | Format-Table
 				Import-Module -Name ImportExcel
 				Add-Type -AssemblyName System.Windows.Forms
 				$browser = New-Object -TypeName System.Windows.Forms.FolderBrowserDialog
@@ -262,7 +264,7 @@ where SystemConfiguration.property=''version'''
 
 function Convert-Int2Name {
 	param (
-		[Parameter(HelpMessage = 'OutputType must match 1,2,3 or 4', Mandatory, ValueFromPipeline)]$OutputType
+		[Parameter(HelpMessage = 'OutputType must match a number between 1 to 5', Mandatory, ValueFromPipeline)]$OutputType
 	)
 	Process {
 		if ($OutputType -notin (1, 2, 3, 4)) {
@@ -275,7 +277,8 @@ function Convert-Int2Name {
 	  '1' { $OutputType = 'HTML' }
 	  '2' { $OutputType = 'CSV' }
 	  '3' { $OutputType = 'EXCEL' }
-	  '4' { $OutputType = 'QUICKREVIEW' }
+	  '4' { $OutputType = 'QuickReview' }
+	  '5' { $OutputType = 'Console' }
 		}
 		return $OutputType
 	}
@@ -307,7 +310,7 @@ $admin = invoke-RunAsAdmin | foreach-object {Write-Output "Verifying administrat
 if(-not $admin)
 {
 	write-output -InputObject "Administrator rights are mandatory.`nPlease run again as Administrator."
-	exit 5;
+	exit
 }
 Write-Output -InputObject "`nImporting required modules"
 Import-RequiredModules
