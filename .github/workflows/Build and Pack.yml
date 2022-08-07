@@ -32,9 +32,9 @@ jobs:
           Foreach ($Module in $Modules){
           $Module=$Module -replace '@{Modules=','' -replace '}',''
           Write-Output -InputObject "Saving $Module"
-          Find-module -Name $Module  | Save-Module -Path .\Modules -Verbose
-          'Verifying Module was saved successfully'
-          test-path -path .\Modules\$Module}
+          Find-module -Name $Module  | Save-Module -Path .\Modules
+          $null= test-path -path .\Modules\$Module | foreach-object {Write-Host "Verifying Module was saved successfully: $_"
+          if ($_ -eq $false){exit 1}}}
         shell: pwsh
 
       - name: Create Zip
@@ -47,12 +47,48 @@ jobs:
         shell: pwsh
 
       - name: Upload Release to Github Repository
-        uses: svenstaro/upload-release-action@v2
-        with:
-          file: .\FoxSitesInformation.zip
-          asset_name: FoxSitesInformation.zip
-          release_name: "Version 1.0.${{ env.GITHUB_RUN_NUMBER }}"
-          body: '**Full Changelog**: [Release Notes](https://github.com/BaTarrY/MyFoxSites/compare/Prerelease...Release)'
-          tag: ${{ env.GITHUB_RUN_NUMBER }}
-          prerelease: false
+        env:
+         UploadKey: ${{ secrets.UPLOADKEY }}
+         Hotfix: ${{ env.GITHUB_RUN_NUMBER }}
+        working-directory: .
+        run: |
+          'Installing New-GitHubRelease module'
+          Install-Module -Name New-GitHubRelease
+          'Importing Module New-GitHubRelease'
+          Import-Module -Name New-GitHubRelease
+          'Start upload sequence'
+          $MainVersion=1
+          $SubVersion=0
+          [String]$Version=$MainVersion + '.' + $SubVersion + '.' + $Hotfix
 
+          New-GitHubRelease -GitHubUsername 'BaTarrY' -GitHubRepositoryName 'MyFoxSites' -GitHubAccessToken $UploadKey -TagName 'v$Version'
+          $newGitHubReleaseParameters =
+          @{
+              GitHubUsername = 'BaTarrY'
+              GitHubRepositoryName = 'MyFoxSites'
+              GitHubAccessToken = '$UploadKey
+              ReleaseName = "My Fox Sites Generator v$Version"
+              TagName = "v1.0.0"
+              ReleaseNotes = '**Full Changelog**: [Release Notes](https://github.com/BaTarrY/MyFoxSites/compare/Prerelease...Release)'
+              AssetFilePaths = .\FoxSitesInformation.zip
+              IsPreRelease = $false
+              IsDraft = $false
+          }
+
+          'Try to create the Release on GitHub and save the results'
+          $result = New-GitHubRelease @newGitHubReleaseParameters
+
+          # Provide some feedback to the user based on the results.
+          if ($result.Succeeded -eq $true)
+          {
+              Write-Output "Release published successfully! View it at $($result.ReleaseUrl)"
+          }
+          elseif ($result.ReleaseCreationSucceeded -eq $false)
+          {
+              Write-Error "The release was not created. Error message is: $($result.ErrorMessage)"
+          }
+          elseif ($result.AllAssetUploadsSucceeded -eq $false)
+          {
+              Write-Error "The release was created, but not all of the assets were uploaded to it. View it at $($result.ReleaseUrl). Error message is: $($result.ErrorMessage)"
+          }
+        shell: pwsh
