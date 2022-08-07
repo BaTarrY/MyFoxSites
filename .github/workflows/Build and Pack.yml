@@ -28,7 +28,7 @@ jobs:
       - name: Insert Required Modules
         working-directory: ./MyFoxSitesGenerator
         run: |
-          $Modules=Import-Csv -Path .\Modules\PlaceHolderForModules.txt
+          $Modules=Import-Csv -Path .\Modules\PlaceHolderForModules.csv
           Foreach ($Module in $Modules){
           $Module=$Module -replace '@{Modules=','' -replace '}',''
           Write-Output -InputObject "Saving $Module"
