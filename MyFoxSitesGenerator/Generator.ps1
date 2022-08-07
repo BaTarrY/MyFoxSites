@@ -326,3 +326,4 @@ if (-not $admin) {
 Write-Output -InputObject "`nImporting required modules"
 Import-RequiredModules
 Read-Host -Prompt "`nChoose an output Type.`nPress number to select`n1. HTML`n2. CSV`n3. EXCEL`n4. QUICKREVIEW (Export to console)`nYour Selection is" | Convert-Int2Name | Invoke-MyFoxSitesGenerator
+Read-Host -Prompt 'Press any key to close...'
