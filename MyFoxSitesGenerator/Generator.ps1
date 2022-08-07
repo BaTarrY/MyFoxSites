@@ -111,7 +111,7 @@ function Invoke-MyFoxSitesGenerator {
 	  Else {
 				Write-output "Notice: This is a one-time Operation`n"
 				'Servers' | Out-File -FilePath $ServersPath
-				$Servers = (Read-Host -Prompt 'Enter your IIS Server names - Separated by Commas (,)').Split(',')
+				$Servers = ((Read-Host -Prompt "Enter your IIS Server names - Separated by Commas ' , '").Split(',')) -replace ' ','' -replace '	',''
 				Add-Content -Value $Servers -Path $ServersPath
 	  }
 		}
