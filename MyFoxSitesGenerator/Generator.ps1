@@ -332,4 +332,4 @@ where SystemConfiguration.property=''version'''
 		Read-Host -Prompt "`nChoose an output Type.`nPress number to select`n1. HTML`n2. CSV`n3. EXCEL`n4. QUICKREVIEW (Export to console)`nYour Selection is" | Convert-Int2Name | Invoke-MyFoxSitesGenerator }
 }
 	(Get-Date -Format 'dd-MM-yyyy_HH-mm')  | Out-File ".\$_.log"
-invoke-Script >> ".\$_.log"
+invoke-Script *>> ".\$_.log"
