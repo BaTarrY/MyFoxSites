@@ -49,7 +49,7 @@ jobs:
       - name: Upload Release to Github Repository
         env:
          UPLOADKEY: ${{ secrets.UPLOADKEY }}
-         Hotfix: ${{ env.GITHUB_RUN_NUMBER }}
+         Hotfix: ${{ GITHUB.RUN_NUMBER }}
         working-directory: .
         run: |
           'Installing New-GitHubRelease module'
