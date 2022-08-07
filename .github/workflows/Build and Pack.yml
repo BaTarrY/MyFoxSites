@@ -55,6 +55,7 @@ jobs:
           $MainVersion=1
           $SubVersion=0
           [String]$Version="$MainVersion.$SubVersion.$env:Hotfix"
+          "Version is $Version"
           'Installing Module PS2EXE'
           Install-Module -Name ps2exe -force
           'Impoting Module PS2EXE'
