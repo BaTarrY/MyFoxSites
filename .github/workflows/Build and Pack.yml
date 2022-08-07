@@ -39,7 +39,7 @@ jobs:
 
       - name: Compile EXE
         env:
-            Hotfix: ${{ GITHUB.RUN_NUMBER }}
+          Hotfix: ${{ GITHUB.RUN_NUMBER }}
         working-directory: .
         run: |
           'Setting Version Number'
@@ -57,6 +57,23 @@ jobs:
           if ($_ -eq $false){exit}}
         shell: powershell
 
+      - name: Remove Script
+        working-directory: .
+        run: |
+          'Deleting PS1 script'
+          Remove-Item -Path .\MyFoxSitesGenerator\Generator.ps1
+          $null=  test-path -path .\MyFoxSitesGenerator\Generator.ps1 | foreach-object {
+            if($_ -eq $false)
+                {
+                  Write-Host "Verifying PS1 script was deleted successfully: True"
+                }
+            else 
+                {
+                  Write-Host "Verifying PS1 script was deleted successfully: False"
+                  exit
+                }
+        shell: pwsh
+
       - name: Create Zip
         working-directory: .
         run: |
@@ -68,9 +85,9 @@ jobs:
 
       - name: Upload Release to Github Repository
         env:
-         UPLOADKEY: ${{ secrets.UPLOADKEY }}
-         Hotfix: ${{ GITHUB.RUN_NUMBER }}
-         WorkflowLog: ${{ GITHUB.RUN_ID }}
+          UPLOADKEY: ${{ secrets.UPLOADKEY }}
+          Hotfix: ${{ GITHUB.RUN_NUMBER }}
+          WorkflowLog: ${{ GITHUB.RUN_ID }}
         working-directory: .
         run: |
           'Installing New-GitHubRelease module'
