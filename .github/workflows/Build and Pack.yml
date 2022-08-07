@@ -53,7 +53,7 @@ jobs:
         working-directory: .
         run: |
           'Installing New-GitHubRelease module'
-          Install-Module -Name New-GitHubRelease
+          Install-Module -Name New-GitHubRelease -Force
           'Importing Module New-GitHubRelease'
           Import-Module -Name New-GitHubRelease
           'Start upload sequence'
