@@ -50,7 +50,7 @@ jobs:
         env:
          UPLOADKEY: ${{ secrets.UPLOADKEY }}
          Hotfix: ${{ GITHUB.RUN_NUMBER }}
-         WorkflowLog: ${{ GITHUB.RUN_ID}}
+         WorkflowLog: ${{ GITHUB.RUN_ID }}
         working-directory: .
         run: |
           'Installing New-GitHubRelease module'
