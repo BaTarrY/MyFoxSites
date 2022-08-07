@@ -42,8 +42,8 @@ jobs:
         run: |
           'Compressing to Zip File'
           Compress-Archive -Path .\FoxSitesInformation -DestinationPath .\MyFoxSitesGenerator.zip -CompressionLevel Optimal
-          $null=  test-path -path .\FoxSitesInformation.zip | foreach-object {Write-Host "Verifying Zip was created successfully: $_"
-          if ($_ -eq $false){exit 2}}
+          $null=  test-path -path .\MyFoxSitesGenerator.zip | foreach-object {Write-Host "Verifying Zip was created successfully: $_"
+          if ($_ -eq $false){exit}}
         shell: pwsh
 
       - name: Upload Release to Github Repository
