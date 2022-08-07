@@ -60,6 +60,7 @@ jobs:
           $MainVersion=1
           $SubVersion=0
           [String]$Version="$MainVersion.$SubVersion.$env:Hotfix"
+          $Path2Zip=((Get-Location).ToString()) + '\MyFoxSitesGenerator.zip'
           [string]$Body='**Full Changelog**: [Release Notes](https://github.com/BaTarrY/MyFoxSites/compare/Prerelease...Release)'
           $newGitHubReleaseParameters = @{
               GitHubUsername = 'BaTarrY'
@@ -68,7 +69,7 @@ jobs:
               ReleaseName = "My Fox Sites Generator v$Version"
               TagName = $Version
               ReleaseNotes = $Body
-              AssetFilePaths = @(MyFoxSitesGenerator.zip)
+              AssetFilePaths = @($Path2Zip)
               IsPreRelease = $false
               IsDraft = $false
           }
