@@ -60,23 +60,21 @@ jobs:
           $MainVersion=1
           $SubVersion=0
           [String]$Version=$MainVersion + '.' + $SubVersion + '.' + $Hotfix
-
-          New-GitHubRelease -GitHubUsername 'BaTarrY' -GitHubRepositoryName 'MyFoxSites' -GitHubAccessToken $UploadKey -TagName 'v$Version'
           [string]$Body='**Full Changelog**: [Release Notes](https://github.com/BaTarrY/MyFoxSites/compare/Prerelease...Release)'
           $newGitHubReleaseParameters =
           @{
               GitHubUsername = 'BaTarrY'
               GitHubRepositoryName = 'MyFoxSites'
-              GitHubAccessToken = '$UploadKey
+              GitHubAccessToken = $UploadKey
               ReleaseName = "My Fox Sites Generator v$Version"
-              TagName = "v1.0.0"
+              TagName = "v$Version"
               ReleaseNotes = $Body
               AssetFilePaths = .\FoxSitesInformation.zip
               IsPreRelease = $false
               IsDraft = $false
           }
 
-          write-Output -InputObject 'Upload the Release to GitHub and check the results'
+          'Upload the Release to GitHub and check the results'
           $result = New-GitHubRelease @newGitHubReleaseParameters
 
           # Provide some feedback to the user based on the results.
