@@ -62,7 +62,7 @@ jobs:
           $SubVersion=0
           [String]$Version="$MainVersion.$SubVersion.$env:Hotfix"
           $Path2Zip=((Get-Location).ToString()) + '\MyFoxSitesGenerator.zip'
-          [string]$Body='**Full Changelog**: [Release Notes](https://github.com/BaTarrY/MyFoxSites/compare/Prerelease...Release)' + "`nWorkflow log: [$env:WorkflowLog](https://github.com/BaTarrY/MyFoxSites/actions/runs/$env:WorkflowLog)
+          [string]$Body='**Full Changelog**: [Release Notes](https://github.com/BaTarrY/MyFoxSites/compare/Prerelease...Release)' + "`nWorkflow log: [" + $env:WorkflowLog + '](https://github.com/BaTarrY/MyFoxSites/actions/runs/' + $env:WorkflowLog + ')'
           $newGitHubReleaseParameters = @{
               GitHubUsername = 'BaTarrY'
               GitHubRepositoryName = 'MyFoxSites'
