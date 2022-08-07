@@ -20,8 +20,8 @@ function Invoke-MyFoxSitesGenerator {
 
   #>
 
-  #DEBUG REQUIREMENTS
-  #find-module -Name ('ImportExcel','PSWriteHTML')  | Save-module -Path "$PSScriptRoot\Modules"
+	#DEBUG REQUIREMENTS
+	#find-module -Name ('ImportExcel','PSWriteHTML')  | Save-module -Path "$PSScriptRoot\Modules"
 
 	param (
 		[securestring]$SecuredCredentials,
@@ -226,7 +226,7 @@ where SystemConfiguration.property=''version'''
 				Invoke-Item -Path $temp
 	  }
 	  'CSV' {
-				$SitesInfo=$SitesInfo | Format-Table
+				$SitesInfo = $SitesInfo | Format-Table
 				Add-Type -AssemblyName System.Windows.Forms
 				$browser = New-Object -TypeName System.Windows.Forms.FolderBrowserDialog
 				$null = $browser.ShowDialog()
@@ -243,7 +243,7 @@ where SystemConfiguration.property=''version'''
 
 
 	  'Excel' {
-				$SitesInfo=$SitesInfo | Format-Table
+				$SitesInfo = $SitesInfo | Format-Table
 				Import-Module -Name ImportExcel
 				Add-Type -AssemblyName System.Windows.Forms
 				$browser = New-Object -TypeName System.Windows.Forms.FolderBrowserDialog
@@ -269,7 +269,7 @@ function Convert-Int2Name {
 	Process {
 		if ($OutputType -notin (1, 2, 3, 4)) {
 	  Write-output -ForegroundColor Red 'Invalid choice. Please select a valid number'
-	  $OutputType = Read-Host -Prompt "`nChoose an output Type.`nPress number to select`n1. HTML`n2. CSV`n3. EXCEL`n4. QUICKREVIEW (Export to console)`nYour Selection is" | Convert-Int2Name
+	  $OutputType = Read-Host -Prompt "`nChoose an output Type.`nEnter chosen number to select`n1. HTML`n2. CSV`n3. EXCEL`n4. QUICKREVIEW (Export to console)`nYour Selection is" | Convert-Int2Name
 		}
 	}
 	END {
@@ -286,7 +286,8 @@ function Convert-Int2Name {
 
 function invoke-RunAsAdmin {
 
-	if ((New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) { ##If administrator
+	if ((New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+		##If administrator
 		return $true
 	}
 	else {
@@ -305,10 +306,22 @@ function Import-RequiredModules {
 	}
 }
 
+function Invoke-ExecutionPolicyInput {
+	if (($Policy = Get-ExecutionPolicy) -ne 'Unrestricted') {
+		[int]$PolicyChoice = Read-Host -Prompt "Execution Policy set to '$Policy'.`nEnter chosen number to select:`n1. Continue`n2. Attempt setting Execution Policy as 'Unrestricted'`nYour selection is"
+	}
+	if ($PolicyChoice -eq 2) {
+		$null = Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope Process -Force
+	}
+	else {
+		return
+	}
+}
+
 Clear-Host
-$admin = invoke-RunAsAdmin | foreach-object {Write-Output "Verifying administrator rights: $_"}
-if(-not $admin)
-{
+Invoke-ExecutionPolicyInput
+$admin = invoke-RunAsAdmin | foreach-object { Write-Output "Verifying administrator rights: $_" }
+if (-not $admin) {
 	write-output -InputObject "Administrator rights are mandatory.`nPlease run again as Administrator."
 	exit
 }

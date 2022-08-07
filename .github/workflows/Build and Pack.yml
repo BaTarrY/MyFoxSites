@@ -52,7 +52,7 @@ jobs:
           'Impoting Module PS2EXE'
           import-module -Name ps2exe
           'Creating EXE'
-          Invoke-PS2EXE -inputFile .\MyFoxSitesGenerator\Generator.ps1 -outputFile .\MyFoxSitesGenerator\MyFoxSites_Generator.exe -iconFile .\ExternalResources\Icon\Favicon.ico  -title 'My Fox Sites Generator.exe' -version $Version -requireAdmin -Verbose -ErrorAction Stop
+          Invoke-PS2EXE -inputFile .\MyFoxSitesGenerator\Generator.ps1 -outputFile .\MyFoxSitesGenerator\MyFoxSites_Generator.exe -iconFile .\ExternalResources\Icon\Favicon.ico  -title 'My Fox Sites Generator.exe' -version $Version -requireAdmin -x64 -company 'Britannica Knowledge Systems' -copyright 'Elior Machlev' -description 'Get Information About Your Fox sites' -credentialGUI -Verbose -ErrorAction Stop
           $null= test-path -path ".\MyFoxSitesGenerator\MyFoxSites_Generator.exe" | foreach-object {Write-Host "Verifying EXE was created successfully: $_"
           if ($_ -eq $false){exit}}
         shell: powershell
