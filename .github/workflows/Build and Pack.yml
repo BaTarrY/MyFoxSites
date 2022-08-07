@@ -62,16 +62,7 @@ jobs:
         run: |
           'Deleting PS1 script'
           Remove-Item -Path .\MyFoxSitesGenerator\Generator.ps1
-          $null=  test-path -path .\MyFoxSitesGenerator\Generator.ps1 | foreach-object {
-            if($_ -eq $false)
-                {
-                  Write-Host "Verifying PS1 script was deleted successfully: True"
-                }
-            else 
-                {
-                  Write-Host "Verifying PS1 script was deleted successfully: False"
-                  exit
-                }
+          $null=  test-path -path .\MyFoxSitesGenerator\Generator.ps1 | foreach-object {if($_ -eq $false){Write-Host "Verifying PS1 script was deleted successfully: True"}; else {Write-Host "Verifying PS1 script was deleted successfully: False"; exit}
         shell: pwsh
 
       - name: Create Zip
