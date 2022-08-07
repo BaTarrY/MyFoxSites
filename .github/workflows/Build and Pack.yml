@@ -45,6 +45,25 @@ jobs:
           $null=  test-path -path .\MyFoxSitesGenerator.zip | foreach-object {Write-Host "Verifying Zip was created successfully: $_"
           if ($_ -eq $false){exit}}
         shell: pwsh
+      
+      - name: Compile EXE
+        env:
+            Hotfix: ${{ GITHUB.RUN_NUMBER }}
+        working-directory: .
+        run: |
+          'Setting Version Number'
+          $MainVersion=1
+          $SubVersion=0
+          [String]$Version="$MainVersion.$SubVersion.$env:Hotfix"
+          'Installing Module PS2EXE'
+          Install-Module -Name ps2exe -force
+          'Impoting Module PS2EXE'
+          import-module -Name ps2exe
+          'Creating EXE'
+          Invoke-PS2EXE -inputFile .\MyFoxSitesGenerator\Generator.ps1 -outputFile .\MyFoxSitesGenerator\MyFoxSites_Generator.exe -iconFile .\ExternalResources\Icon\Favicon.ico  -title 'My Fox Sites Generator.exe' -version $Version -requireAdmin -Verbose -ErrorAction Stop
+          $null= test-path -path ".\MyFoxSitesGenerator\MyFoxSites_Generator.exe" | foreach-object {Write-Host "Verifying EXE was created successfully: $_"
+          if ($_ -eq $false){exit}}
+        shell: powershell
 
       - name: Upload Release to Github Repository
         env:
