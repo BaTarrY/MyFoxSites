@@ -59,14 +59,14 @@ jobs:
           'Start upload sequence'
           $MainVersion=1
           $SubVersion=0
-          [String]$Version="$MainVersion.$SubVersion.$env:UPLOADKEY"
+          [String]$Version="$MainVersion.$SubVersion.$env:Hotfix"
           [string]$Body='**Full Changelog**: [Release Notes](https://github.com/BaTarrY/MyFoxSites/compare/Prerelease...Release)'
           $newGitHubReleaseParameters = @{
               GitHubUsername = 'BaTarrY'
               GitHubRepositoryName = 'MyFoxSites'
               GitHubAccessToken = "$env:UPLOADKEY"
               ReleaseName = "My Fox Sites Generator v$Version"
-              TagName = "v$env:UPLOADKEY"
+              TagName = $Version
               ReleaseNotes = $Body
               AssetFilePaths = .\FoxSitesInformation.zip
               IsPreRelease = $false
