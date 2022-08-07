@@ -41,7 +41,7 @@ jobs:
         working-directory: .
         run: |
           'Compressing to Zip File'
-          Compress-Archive -Path .\FoxSitesInformation -DestinationPath .\FoxSitesInformation.zip -CompressionLevel Optimal
+          Compress-Archive -Path .\FoxSitesInformation -DestinationPath .\MyFoxSitesGenerator.zip -CompressionLevel Optimal
           $null=  test-path -path .\FoxSitesInformation.zip | foreach-object {Write-Host "Verifying Zip was created successfully: $_"
           if ($_ -eq $false){exit 2}}
         shell: pwsh
@@ -68,7 +68,7 @@ jobs:
               ReleaseName = "My Fox Sites Generator v$Version"
               TagName = $Version
               ReleaseNotes = $Body
-              AssetFilePaths = @(.\FoxSitesInformation.zip)
+              AssetFilePaths = @(MyFoxSitesGenerator.zip)
               IsPreRelease = $false
               IsDraft = $false
           }
