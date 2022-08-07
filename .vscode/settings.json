@@ -1,16 +1,18 @@
 {
     "cSpell.ignoreWords": [
         "Runspace",
-        "TOBEREMOVED"
+        "TOBEREMOVED",
+        "svenstaro"
     ],
     "cSpell.words": [
         "ADSI",
+        "computername",
         "HKLM",
         "notin",
-        "Sqlcmd",
-        "securestring",
+        "pwsh",
         "QUICKREVIEW",
-        "computername"
+        "securestring",
+        "Sqlcmd"
     ],
     "cSpell.enableFiletypes": [
         "powershell"
