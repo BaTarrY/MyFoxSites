@@ -76,7 +76,7 @@ jobs:
               IsDraft = $false
           }
 
-          'Try to create the Release on GitHub and save the results'
+          write-Output -InputObject 'Try to create the Release on GitHub and save the results'
           $result = New-GitHubRelease @newGitHubReleaseParameters
 
           # Provide some feedback to the user based on the results.
