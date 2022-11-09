@@ -2,22 +2,18 @@ function Invoke-MyFoxSitesGenerator {
 	<#
   .SYNOPSIS
   CREATE A TABLE WITH INFORMATION ABOUT FOX SITES.
-
   .PARAMETER SecuredCredentials
   IF NOT SUPPLIED, ASKS FOR CREDENTIALS
   IF SUPPLIED, USE THAT SUPPLIED CREDENTIALS
-
   .PARAMETER Servers
   IF NOT SUPPLIED, CHECK FOR FILE "IISServers.csv" IN DOCUMENTS FOLDER THAT INCLUDES SERVER NAMES
 	IF IISServers.csv IS NOT FOUND, ASKS FOR SERVERS AND SAVE TO IISServers.csv FILE AT CHOSEN Location
   IF SUPPLIED USE THAT SUPPLIED SERVERS.
-
   .PARAMETER OutputType
   HTML: CREATED HTML FILE WITH TABLE
   CSV: CREATED CSV FILE AT CHOSEN Location.
   EXCEL: CREATE XLSX FILE AT CHOSEN Location
   QUICKREVIEW: OUTPUT RESULTS TO CONSOLE
-
   #>
 
 	#DEBUG REQUIREMENTS
@@ -158,22 +154,28 @@ where SystemConfiguration.property=''version'''
 						2 { $SQLAuthType = 'WINDOWS' }
 					}
 					$SQLInstanceCheck = $SQLInstance.Split('\')[0]
-					if (($SQLInstanceCheck) -eq $HostName) {
-						$SQLResult = Invoke-Sqlcmd -ServerInstance $SQLInstance -Database $DataBase -Query $Using:SQLQuery
+					Try {
+						if (($SQLInstanceCheck) -eq $HostName) {
+							$SQLResult = Invoke-Sqlcmd -ServerInstance $SQLInstance -Database $DataBase -Query $Using:SQLQuery
 
+						}
+						else {
+							$SQLResult = Invoke-Command -ComputerName $SQLInstanceCheck -ArgumentList $SQLInstance, $Database, $Using:SQLQuery -Credential $Using:cred -ScriptBlock {
+								[CmdletBinding()]
+								param($SQLInstance, $Database, $SQLQuery)
+								Invoke-Sqlcmd -ServerInstance $SQLInstance -Database $DataBase -Query $SQLQuery }
+						}
+						$LDSServer = $SQLResult | Select-Object -ExpandProperty LDSServer
+						if ('127.0.0.1' -or 'localhost' -or $HostName) {
+							$LDSServer = $HostName
+						}
+						$LDSPort = $SQLResult | Select-Object -ExpandProperty LDSPort
+						$Version = $SQLResult | Select-Object -ExpandProperty FoxVersion
 					}
-					else {
-						$SQLResult = Invoke-Command -ComputerName $SQLInstanceCheck -ArgumentList $SQLInstance, $Database, $Using:SQLQuery -Credential $Using:cred -ScriptBlock {
-							[CmdletBinding()]
-							param($SQLInstance, $Database, $SQLQuery)
-							Invoke-Sqlcmd -ServerInstance $SQLInstance -Database $DataBase -Query $SQLQuery }
+					Catch {
+						$LDSPort = ''
+						$Version = ''
 					}
-					$LDSServer = $SQLResult | Select-Object -ExpandProperty LDSServer
-					if ('127.0.0.1' -or 'localhost' -or $HostName) {
-						$LDSServer = $HostName
-					}
-					$LDSPort = $SQLResult | Select-Object -ExpandProperty LDSPort
-					$Version = $SQLResult | Select-Object -ExpandProperty FoxVersion
 
 					$HyperLinks = ''
 					foreach ($bind in $site.bindings.Collection) {
@@ -208,7 +210,7 @@ where SystemConfiguration.property=''version'''
 			'HTML' {
 				$Temp = [Environment]::GetFolderPath('MyDocuments')
 				$Temp = $Temp + '\My Sites Information.HTML'
-				$SitesInfo | Out-HtmlView  -FilePath $Temp -DefaultSortColumn 'Fox Version' -DefaultSortOrder Descending -Title 'My Sites Information' -Filtering  -FuzzySearchSmartToggle -DisablePaging -ExcludeProperty ('PSComputerName', 'RunspaceId', 'PSShowComputerName')  -Buttons ('csvHtml5', 'excelHtml5', 'pdfHtml5', 'print', 'searchBuilder', 'searchPanes') -AutoSize -Style cell-border    #-FixedHeader -FreezeColumnsLeft #-FixedHeader -AutoSize -OrderMulti  -DefaultSortOrder Descending -Title 'Fox Sites Information' -Filtering -PreventShowHTML
+				$SitesInfo | Out-HtmlView  -FilePath $Temp -DefaultSortColumn 'Fox Version' -DefaultSortOrder Descending -Title 'My Sites Information' -Filtering  -FuzzySearchSmartToggle -DisablePaging -ExcludeProperty ('PSComputerName', 'RunspaceId', 'PSShowComputerName')  -Buttons ('csvHtml5', 'excelHtml5', 'pdfHtml5', 'print', 'searchBuilder', 'searchPanes') -AutoSize
 				$HTMLContent = Get-Content -Path $Temp
 				$HTMLContent = $HTMLContent -replace '<head>', '<head>
 		  <!-- DisableCaching -->
