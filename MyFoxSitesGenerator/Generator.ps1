@@ -136,6 +136,20 @@ where SystemConfiguration.property=''version'''
 			$HostName = $env:computername
 			$Sites = Get-ChildItem -Path IIS:\Sites | Where-Object -Property Name -NE 'Default Web Site' | Where-Object -Property Name -NotLike "*OPT*"
 			foreach ($Site in $Sites) {
+
+				#Initialize Variables
+				$URL=''
+				$HyperLinks = ''
+				$hyperlink=''
+				$SQLInstance=''
+				$DataBase=''
+				$InstallLocation=''
+				$SQLAuthType=''
+				$LDSServer=''
+				$LDSPort=''
+				$Version=''
+				$Note=''
+
 				$SiteName = ($Site | Select-Object -ExpandProperty Name)
 				IF (Test-Path -Path "HKLM:\SOFTWARE\BKS\Fox\$Site") {
 					$Registry = "HKLM:\SOFTWARE\BKS\Fox\$SiteName"
@@ -175,11 +189,10 @@ where SystemConfiguration.property=''version'''
 					Catch {
 						$LDSPort = ''
 						$Version = ''
-						$DataBase = ''
 						$Note='DataBase Unavailable'
 					}
 
-					$HyperLinks = ''
+					
 					foreach ($bind in $site.bindings.Collection) {
 						$URL = $bind.protocol + '://' + $Bind.BindingInformation.Split(":")[-1]
 						$hyperlink = 'TOBEREMOVED' + '<a href="' + $url + 'TOBEREMOVED' + '">' + $url + '</a>' + 'TOBEREMOVED' + '<br>'
