@@ -138,6 +138,7 @@ where SystemConfiguration.property=''version'''
 			foreach ($Site in $Sites) {
 
 				#Initialize Variables
+				$Registry=''
 				$URL=''
 				$HyperLinks = ''
 				$hyperlink=''
@@ -154,7 +155,7 @@ where SystemConfiguration.property=''version'''
 				IF (Test-Path -Path "HKLM:\SOFTWARE\BKS\Fox\$Site") {
 					$Registry = "HKLM:\SOFTWARE\BKS\Fox\$SiteName"
 				}
-				Elseif (Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\BKS\Fox\$SiteName") {
+				Elseif ((Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\BKS\Fox\$SiteName" ) -and $null -eq $Registry) {
 					$Registry = "HKLM:\SOFTWARE\WOW6432Node\BKS\Fox\$SiteName"
 				}
 				else { return }
