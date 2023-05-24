@@ -152,8 +152,11 @@ where SystemConfiguration.property=''version'''
 				$Note=''
 
 				$SiteName = ($Site | Select-Object -ExpandProperty Name)
-				IF (Test-Path -Path "HKLM:\SOFTWARE\BKS\Fox\$Site") {
+				IF (Test-Path -Path "HKLM:\SOFTWARE\BKS\Fox\$SiteName") {
 					$Registry = "HKLM:\SOFTWARE\BKS\Fox\$SiteName"
+				}
+				Elseif ((Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\BKS\Fox\$SiteName" ) -and $null -eq $Registry) {
+					$Registry = "HKLM:\SOFTWARE\WOW6432Node\BKS\Fox\$SiteName"
 				}
 				else { return }
 
