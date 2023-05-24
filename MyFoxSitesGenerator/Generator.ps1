@@ -342,4 +342,4 @@ if (-not $admin) {
 Write-Output -InputObject "`nImporting required modules"
 Import-RequiredModules
 Convert-Int2Name -OutputType '1' | Invoke-MyFoxSitesGenerator
-Read-Host -Prompt 'Press any key to close...'
+Read-Host -Prompt 'Press ENTER to close...'
