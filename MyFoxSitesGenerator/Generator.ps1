@@ -156,14 +156,14 @@ where SystemConfiguration.property=''version'''
 					$SQLInstanceCheck = $SQLInstance.Split('\')[0]
 					Try {
 						if (($SQLInstanceCheck) -eq $HostName) {
-							$SQLResult = Invoke-Sqlcmd -ServerInstance $SQLInstance -Database $DataBase -Query $Using:SQLQuery
+							$SQLResult = Invoke-Sqlcmd -ServerInstance $SQLInstance -Database $DataBase -Query $Using:SQLQuery -ErrorAction Stop
 
 						}
 						else {
 							$SQLResult = Invoke-Command -ComputerName $SQLInstanceCheck -ArgumentList $SQLInstance, $Database, $Using:SQLQuery -Credential $Using:cred -ScriptBlock {
 								[CmdletBinding()]
 								param($SQLInstance, $Database, $SQLQuery)
-								Invoke-Sqlcmd -ServerInstance $SQLInstance -Database $DataBase -Query $SQLQuery }
+								Invoke-Sqlcmd -ServerInstance $SQLInstance -Database $DataBase -Query $SQLQuery -ErrorAction Stop}
 						}
 						$LDSServer = $SQLResult | Select-Object -ExpandProperty LDSServer
 						if ('127.0.0.1' -or 'localhost' -or $HostName) {
@@ -175,6 +175,8 @@ where SystemConfiguration.property=''version'''
 					Catch {
 						$LDSPort = ''
 						$Version = ''
+						$DataBase = ''
+						$Note='DataBase Unavailable'
 					}
 
 					$HyperLinks = ''
@@ -198,6 +200,7 @@ where SystemConfiguration.property=''version'''
 					Add-Member -InputObject $Item -type NoteProperty -Name 'SQL Authentication Type' -Value $SQLAuthType
 					Add-Member -InputObject $Item -type NoteProperty -Name 'LDS Server' -Value $LDSServer.ToUpper()
 					Add-Member -InputObject $Item -type NoteProperty -Name 'LDS Port' -Value $LDSPort
+					Add-Member -InputObject $Item -type NoteProperty -Name 'Note' -Value $Note
 
 					$SitesInfo += $Item
 				}
@@ -327,5 +330,5 @@ if (-not $admin) {
 }
 Write-Output -InputObject "`nImporting required modules"
 Import-RequiredModules
-Read-Host -Prompt "`nChoose an output Type.`nPress number to select`n1. HTML`n2. CSV`n3. EXCEL`n4. QUICKREVIEW (Export to console)`nYour Selection is" | Convert-Int2Name | Invoke-MyFoxSitesGenerator
+Convert-Int2Name -OutputType '1' | Invoke-MyFoxSitesGenerator
 Read-Host -Prompt 'Press any key to close...'
